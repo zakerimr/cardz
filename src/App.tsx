@@ -23,10 +23,18 @@ function App() {
 
   return (
     <>
-      <h1>Cardz</h1>
-      <div className="container flex flex-row">
+      <h1 className="text-4xl mb-20">Card Game</h1>
+
+      <div className="flex container gap-10">
         {cards[0]}
-        {cards[1]}
+        <img
+          src="/Back.svg"
+          className="max-h-[250px] w-auto cursor-pointer transition-shadow duration-200 hover:shadow-lg"
+        />
+      </div>
+
+      <div className="flex fixed bottom-4 left-0 w-screen justify-center gap-3">
+        {...cards.slice(-5)}
       </div>
     </>
   );

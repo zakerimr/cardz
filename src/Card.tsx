@@ -1,5 +1,3 @@
-import React from "react";
-
 import type { Area, Rank, Suit } from "./types";
 
 interface CardProps {
@@ -18,12 +16,10 @@ const Card = ({ area, rank, suit }: CardProps) => {
   }
 
   return (
-    <div>
-      <img className="border-2" src={imgUrl} width={250}></img>
-      <span>
-        Card ({area}, {suit}, {rank})
-      </span>
-    </div>
+    <img
+      src={imgUrl}
+      className="cursor-pointer transition-shadow duration-200 hover:shadow-lg"
+    ></img>
   );
 };
 
