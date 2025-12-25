@@ -11,4 +11,4 @@ export const ranks = [
 export type Suit = (typeof suits)[number];
 export type Rank = (typeof ranks)[number];
 
-export type Area = "column" | "deck" | "hand" | "upcard";
+export type Area = "tower" | "pdeck" | "edeck" | "hand" | "upcard";
