@@ -10,5 +10,8 @@ export const ranks = [
 
 export type Suit = (typeof suits)[number];
 export type Rank = (typeof ranks)[number];
-
-export type Area = "tower" | "pdeck" | "edeck" | "hand" | "upcard";
+export type Area = "tower" | "pdeck" | "edeck" | "hand" | "enemy";
+export interface CardSet {
+  area: Area;
+  cards: string[];
+}

@@ -1,56 +1,31 @@
 import "./App.css";
 import Card from "./Card";
-import type { Rank, Suit } from "./types";
-import { ranks, suits } from "./types";
-import type { Area } from "./types";
-import { shuffleArray } from "./shuffle";
+import type { Rank, Suit, CardSet, Area } from "./types";
+import { useRef } from "react";
+// import { useGSAP } from "@gsap/react";
+import gsap from "gsap";
+import Flip from "gsap/dist/Flip";
+import setup from "./setup";
 
 function App() {
-  const deck: string[] = [];
+  gsap.registerPlugin(Flip);
 
-  for (const rank of ranks) {
-    for (const suit of suits) {
-      let rs = `${rank}${suit}`;
-      if (rs === "AS") {
-        continue;
-      }
-      deck.push(`${rank}${suit}`);
+  const enemyRef = useRef<HTMLDivElement>(null);
+
+  const changePos = (card: EventTarget | null, destination: Area): void => {
+    const el = enemyRef.current;
+    if (!el) return console.log("enemyRef is falsy!", enemyRef.current);
+
+    if (destination === "enemy") {
+      const c = card as HTMLImageElement;
+      const state = Flip.getState(c);
+
+      el.style.position = "absolute";
+      el.appendChild(c);
+
+      // Flip.from(state, { duration: 2, ease: "none" });
     }
-  }
-
-  // deck = 51
-  //        -5 = 46  (hand)
-  //        -1 = 45  (upcard)
-  //        -1 = 44  (ace of spades)
-
-  let shuffled_deck: string[] = shuffleArray(deck);
-
-  interface CardSet {
-    area: Area;
-    cards: string[];
-  }
-
-  const hand: CardSet = {
-    area: "hand",
-    cards: shuffled_deck.splice(0, 5),
   };
-
-  const upcard: CardSet = {
-    area: "upcard",
-    cards: shuffled_deck.splice(0, 1),
-  };
-
-  const pdeck: CardSet = {
-    area: "pdeck",
-    cards: shuffled_deck.splice(0, 22),
-  };
-
-  const edeck: CardSet = {
-    area: "edeck",
-    cards: shuffled_deck,
-  };
-
-  console.log("==================================================");
 
   const renderCardSet = (cardSet: CardSet): React.ReactNode[] =>
     cardSet.cards.map((c) => (
@@ -59,45 +34,51 @@ function App() {
         area={cardSet.area}
         rank={c[0] as Rank}
         suit={c[1] as Suit}
+        changePos={changePos}
+        ref={useRef(null)}
       />
     ));
 
-  const handCards = renderCardSet(hand);
-  const upcardCard = renderCardSet(upcard);
-  const pdeckCards = renderCardSet(pdeck);
-  const edeckCards = renderCardSet(edeck);
+  const sets = setup();
+
+  const handCards = renderCardSet(sets.hand);
+  const enemyCards = renderCardSet(sets.enemy);
+  const pdeckCards = renderCardSet(sets.pdeck);
+  const edeckCards = renderCardSet(sets.edeck);
 
   return (
     <>
       <h1 className="text-4xl mb-20">Card Game</h1>
-      {/* 
-      <div id="upcard" className="relative">
-        {upcardCard}
-      </div>
 
-      <div id="edeck" className="relative">
-        {edeckCards}
-      </div>
+      <div className="flex gap-6 bg-green-500">
+        {/* Enemy upcard */}
+        <div id="enemy" ref={enemyRef} className="relative">
+          {enemyCards}
+        </div>
 
-      <div id="tower" className="relative flex container gap-10">
-        {<Card key={"AS"} area="tower" rank="A" suit="S" />}
-      </div>
-
-      <div id="pdeck" className="relative">
-        {pdeckCards}
-      </div> */}
-
-      <div className="w-[250] bg-sky-300">
-        dfasdfas sdfasd sfda sdfasddf asd
+        <div id="edeck">{edeckCards[0]}</div>
       </div>
 
       <div
         id="hand"
-        className="flex fixed bottom-4 left-0 w-screen justify-center gap-3"
+        className="flex fixed bottom-4 left-0 w-screen justify-center gap-3 bg-sky-500"
       >
         {handCards}
         {pdeckCards[0]}
-        {pdeckCards.length}
+      </div>
+
+      <div
+        id="tower"
+        className="fixed flex flex-col justify-end bottom-4 right-4 h-screen bg-red-500"
+      >
+        <Card
+          key={"base"}
+          area="tower"
+          rank="A"
+          suit="S"
+          changePos={changePos}
+          ref={useRef(null)}
+        />
       </div>
     </>
   );

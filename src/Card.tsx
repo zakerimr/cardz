@@ -1,16 +1,16 @@
-import { useState } from "react";
+import { type RefObject } from "react";
 import type { Area, Rank, Suit } from "./types";
-import { getValue } from "./util";
+// import { getValue } from "./util";
 
 interface CardProps {
+  ref: RefObject<HTMLImageElement> | RefObject<null>;
   area: Area;
   rank: Rank;
   suit: Suit;
+  changePos: (card: EventTarget | null, destination: Area) => void;
 }
 
-const Card = ({ area, rank, suit }: CardProps) => {
-  const [location, setLocation] = useState(area);
-
+const Card = ({ ref, area, rank, suit, changePos }: CardProps) => {
   let imgUrl;
   if (area === "pdeck" || area === "edeck") {
     imgUrl = "/Back.svg";
@@ -19,20 +19,18 @@ const Card = ({ area, rank, suit }: CardProps) => {
     imgUrl = `/faces/${filename}.svg`;
   }
 
-  const handleClick = (e: any) => {
-    // console.log("Clicked", e);
-    if (location === "hand") {
-      let v = getValue(rank);
-      if (v < 6) {
-        console.log("card too low! value: ", v);
-      }
+  const handleClick = (event: React.MouseEvent<HTMLImageElement>) => {
+    // console.log("Card value: ", getValue(rank));
+    if (area === "hand") {
+      changePos(event.target, "enemy");
     }
   };
 
   return (
     <img
       src={imgUrl}
-      className="top-2 left-2 cursor-pointer transition-shadow duration-200 hover:shadow-lg rounded-xl"
+      ref={ref}
+      className="cursor-pointer rounded-xl transition-transform hover:-translate-y-2 CARDREF"
       onClick={handleClick}
       width={125}
     ></img>
